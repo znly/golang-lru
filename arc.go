@@ -227,6 +227,26 @@ func (c *ARCCache) Remove(key interface{}) {
 	}
 }
 
+// RemoveMulti is used to purge multuple keys from the cache
+func (c *ARCCache) RemoveMulti(keys ...interface{}) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	for _, key := range keys {
+		if c.t1.Remove(key) {
+			continue
+		}
+		if c.t2.Remove(key) {
+			continue
+		}
+		if c.b1.Remove(key) {
+			continue
+		}
+		if c.b2.Remove(key) {
+			continue
+		}
+	}
+}
+
 // Purge is used to clear the cache
 func (c *ARCCache) Purge() {
 	c.lock.Lock()
